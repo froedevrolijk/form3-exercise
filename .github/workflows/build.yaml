@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         go: [1.18, 1.19]
-    name: Lint
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
