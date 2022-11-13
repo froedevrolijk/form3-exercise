@@ -1,6 +1,6 @@
 # Form3 Take Home Exercise
 
-[![build](https://github.com/froedevrolijk/form3-exercise/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/froedevrolijk/form3-exercise/actions/workflows/build.yaml) [![codecov](https://codecov.io/gh/froedevrolijk/form3-exercise/branch/dev/graph/badge.svg?token=QDHQMIWDRO)](https://codecov.io/gh/froedevrolijk/form3-exercise)
+[![build](https://github.com/froedevrolijk/form3-exercise/actions/workflows/build.yaml/badge.svg)](https://github.com/froedevrolijk/form3-exercise/actions/workflows/build.yaml) [![codecov](https://codecov.io/gh/froedevrolijk/form3-exercise/graph/badge.svg?token=QDHQMIWDRO)](https://codecov.io/gh/froedevrolijk/form3-exercise)
 
 Go client for accessing the [Form3 account API](https://www.api-docs.form3.tech/api/schemes/bacs/accounts/overview)
 
