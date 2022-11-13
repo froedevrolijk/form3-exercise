@@ -29,10 +29,10 @@ Go client for accessing the [Form3 account API](https://www.api-docs.form3.tech/
 #### Create a client:
 ```go
 import (
-  "context"
-  "fmt"
+   "context"
+   "fmt"
 
-  "github.com/froedevrolijk/form3-exercise/form3"
+   "github.com/froedevrolijk/form3-exercise/form3"
 )
 
 c := form3.NewClient()
