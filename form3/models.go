@@ -37,13 +37,13 @@ type AccountAttributes struct {
 	Switched                bool     `json:"switched,omitempty"`
 }
 
-// AccountResponse represents a newly created account.
+// AccountResponse represents the response for a newly created account.
 type AccountResponse struct {
 	Account *AccountResponseData `json:"data"`
 	Self    string               `json:"self"`
 }
 
-// AccountResponseData represents data related to an newly created account.
+// AccountResponseData represents the response data related to an newly created account.
 type AccountResponseData struct {
 	Attributes     *AccountAttributes `json:"attributes,omitempty"`
 	CreatedOn      time.Time          `json:"created_on"`
