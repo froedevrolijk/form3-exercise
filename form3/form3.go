@@ -29,19 +29,27 @@ type service struct {
 }
 
 // NewClient returns a new Form3 API client.
-func NewClient() *Client {
+func NewClient(httpClient *http.Client) *Client {
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+		httpClient.Timeout = defaultTimeout
+	}
+
 	baseUrl, _ := url.Parse(getBaseUrl())
 
 	c := &Client{
 		BaseUrl: baseUrl,
-		client: &http.Client{
-			Timeout: defaultTimeout,
-		},
+		client:  httpClient,
 	}
 
 	c.Accounts = &AccountsService{client: c}
 
 	return c
+}
+
+// Client returns the configured HTTP client.
+func (c *Client) Client() *http.Client {
+	return c.client
 }
 
 // NewRequest creates an API request.

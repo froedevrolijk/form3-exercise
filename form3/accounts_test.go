@@ -18,12 +18,13 @@ var (
 	mux    *http.ServeMux
 	client *Client
 	server *httptest.Server
+	ctx    = context.Background()
 )
 
 func setup() func() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
-	client = NewClient()
+	client = NewClient(nil)
 
 	url, _ := url.Parse(server.URL)
 	client.BaseUrl = url
@@ -45,7 +46,7 @@ func TestGetAccount(t *testing.T) {
 		fmt.Fprint(w, readFixture("account-response.json"))
 	})
 
-	account, _, err := client.Accounts.GetAccount(context.Background(), testUUID)
+	account, _, err := client.Accounts.GetAccount(ctx, testUUID)
 	if err != nil {
 		t.Errorf("GetAccount returned an error: %v", err)
 	}
@@ -70,7 +71,7 @@ func TestGetAccount_InvalidUUID(t *testing.T) {
 		fmt.Fprint(w, readFixture("invalid-uuid.json"))
 	})
 
-	_, _, err := client.Accounts.GetAccount(context.Background(), invalidUUID)
+	_, _, err := client.Accounts.GetAccount(ctx, invalidUUID)
 
 	want := &ErrorResponse{
 		Status:       400,
@@ -95,7 +96,7 @@ func TestGetAccount_NotFound(t *testing.T) {
 		fmt.Fprint(w, readFixture("not-found.json"))
 	})
 
-	_, _, err := client.Accounts.GetAccount(context.Background(), testUUID)
+	_, _, err := client.Accounts.GetAccount(ctx, testUUID)
 
 	want := &ErrorResponse{
 		Status:       404,
@@ -120,7 +121,7 @@ func TestCreateAccount(t *testing.T) {
 		fmt.Fprint(w, readFixture("account-response.json"))
 	})
 
-	account, _, err := client.Accounts.CreateAccount(context.Background(), body)
+	account, _, err := client.Accounts.CreateAccount(ctx, body)
 	if err != nil {
 		t.Errorf("CreateAccount returned an error: %v", err)
 	}
@@ -148,7 +149,7 @@ func TestDeleteAccount(t *testing.T) {
 		Version:   0,
 	}
 
-	resp, err := client.Accounts.DeleteAccount(context.Background(), delOpt)
+	resp, err := client.Accounts.DeleteAccount(ctx, delOpt)
 	if err != nil {
 		t.Errorf("DeleteAccount returned an error: %v", err)
 	}
