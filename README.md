@@ -35,7 +35,7 @@ import (
    "github.com/froedevrolijk/form3-exercise/form3"
 )
 
-c := form3.NewClient()
+c := form3.NewClient(nil)
 ```
 
 #### Create an account:
@@ -63,14 +63,16 @@ someAccount := &form3.Account{
 	},
 }
 
-account, _, _ := c.Accounts.CreateAccount(context.Background(), someAccount)
+ctx := context.Background()
+
+account, _, _ := c.Accounts.CreateAccount(ctx, someAccount)
 
 fmt.Printf("Account: %+v", account.Account)
 ```
 
 #### Fetch an account:
 ```go
-account, _, _ := c.Accounts.GetAccount(context.Background(), someUUID)
+account, _, _ := c.Accounts.GetAccount(ctx, someUUID)
 
 fmt.Printf("Account: %+v", account.Account)
 ```
@@ -82,7 +84,7 @@ delOpt := &form3.DeleteOptions{
 	Version:   0,
 }
 
-c.Accounts.DeleteAccount(context.Background(), delOpt)
+c.Accounts.DeleteAccount(ctx, delOpt)
 ```
 
 ### Note

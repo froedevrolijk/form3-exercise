@@ -1,7 +1,6 @@
 package form3
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,15 +12,25 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
-	c := NewClient()
+	c := NewClient(nil)
 
-	if baseURL := c.BaseUrl.String(); baseURL != getBaseUrl() {
-		t.Errorf("NewClient BaseUrl; got %v, want %v", baseURL, defaultBaseUrl)
+	if baseUrl := c.BaseUrl.String(); baseUrl != getBaseUrl() {
+		t.Errorf("NewClient BaseUrl; got %v, want %v", baseUrl, defaultBaseUrl)
+	}
+
+	if client := c.Client(); client != http.DefaultClient {
+		t.Errorf("NewClient Client; got %+v, want %+v", client, http.DefaultClient)
+	}
+
+	httpTestClient := new(http.Client)
+	c = NewClient(httpTestClient)
+	if client := c.Client(); client != httpTestClient {
+		t.Errorf("NewClient Test Client; got %+v, want %+v", client, httpTestClient)
 	}
 }
 
 func TestNewRequest(t *testing.T) {
-	c := NewClient()
+	c := NewClient(nil)
 
 	type Health struct {
 		Status string `json:"status"`
@@ -30,7 +39,7 @@ func TestNewRequest(t *testing.T) {
 	wantUrl := getBaseUrl() + "/v1/health"
 	wantBodyStr := "{\"status\":\"up\"}\n"
 
-	req, _ := c.NewRequest(context.Background(), http.MethodGet, "/v1/health", &Health{Status: "up"})
+	req, _ := c.NewRequest(ctx, http.MethodGet, "/v1/health", &Health{Status: "up"})
 	if u := req.URL.String(); u != wantUrl {
 		t.Errorf("NewRequest URL; got %v, want %v", u, wantUrl)
 	}
@@ -43,9 +52,9 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestNewRequest_BadUrl(t *testing.T) {
-	c := NewClient()
+	c := NewClient(nil)
 
-	_, err := c.NewRequest(context.Background(), http.MethodGet, "/!%$@!", nil)
+	_, err := c.NewRequest(ctx, http.MethodGet, "/!%$@!", nil)
 
 	if err == nil {
 		t.Errorf("Expected an error")
@@ -57,9 +66,9 @@ func TestNewRequest_BadUrl(t *testing.T) {
 }
 
 func TestNewRequest_EmptyBody(t *testing.T) {
-	c := NewClient()
+	c := NewClient(nil)
 
-	req, err := c.NewRequest(context.Background(), http.MethodGet, "/", nil)
+	req, err := c.NewRequest(ctx, http.MethodGet, "/", nil)
 
 	if err != nil {
 		t.Errorf("NewRequest returned an error %v", err)
@@ -71,13 +80,13 @@ func TestNewRequest_EmptyBody(t *testing.T) {
 }
 
 func TestNewRequest_InvalidJSON(t *testing.T) {
-	c := NewClient()
+	c := NewClient(nil)
 
 	type invalidJson struct {
 		Invalid map[interface{}]interface{}
 	}
 
-	_, err := c.NewRequest(context.Background(), http.MethodGet, "/", new(invalidJson))
+	_, err := c.NewRequest(ctx, http.MethodGet, "/", new(invalidJson))
 
 	if err == nil {
 		t.Errorf("NewRequest expected an error")
@@ -101,7 +110,7 @@ func TestSendRequest(t *testing.T) {
 		fmt.Fprint(w, `{"Field":"v"}`)
 	})
 
-	req, _ := client.NewRequest(context.Background(), http.MethodGet, "/", nil)
+	req, _ := client.NewRequest(ctx, http.MethodGet, "/", nil)
 
 	body := new(TestType)
 
@@ -125,7 +134,7 @@ func TestSendRequest_HttpError(t *testing.T) {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 	})
 
-	req, _ := client.NewRequest(context.Background(), http.MethodGet, "/", nil)
+	req, _ := client.NewRequest(ctx, http.MethodGet, "/", nil)
 	_, err := client.SendRequest(req, nil)
 
 	if err == nil {
@@ -143,7 +152,7 @@ func TestSendRequest_NoContent(t *testing.T) {
 
 	body := new(json.RawMessage)
 
-	req, _ := client.NewRequest(context.Background(), http.MethodDelete, "/", nil)
+	req, _ := client.NewRequest(ctx, http.MethodDelete, "/", nil)
 	_, err := client.SendRequest(req, body)
 
 	if err != nil {
