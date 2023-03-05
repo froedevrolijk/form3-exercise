@@ -86,7 +86,3 @@ delOpt := &form3.DeleteOptions{
 
 c.Accounts.DeleteAccount(ctx, delOpt)
 ```
-
-### Note
-Author: Froede Vrolijk  
-I started learning Go about half a year ago. I'm using Scala at my current job.  
